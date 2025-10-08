@@ -1,0 +1,24 @@
+///////////////one node:
+//find connections around one node, by hierarchy level, unidirectional
+match path=(b:Building)-[*1..1]-(r:Room)  return path
+match path=(b:Building)-[*1..3]-(r)  return path
+
+
+//one node:find connections around one node, by hierarchy level, directional
+match path=(b:Building)-[*1..1]->(r:Room)  return path
+///////////////////////////////////////////////////
+
+////////////////two nodes:
+//find all connections between 2 nodes
+match path=(b:Building)-[*1..4]-(r:Room)  return path
+
+//find shortest path between 2 nodes
+match path=shortestPath((b:Building)-[*1..4]-(r:Room))  return path
+///////////////////////////////////////////////////
+
+
+//recommendation system
+match
+path1=(s1:Sensor{id:"S-Temp-101"})-[:MONITORS]->(r1:Room)<-[:HAS_ROOM]-(f1:Floor{number:1}),
+ path2= (s2:Sensor)-[:MONITORS]->(r2:Room)<-[:HAS_ROOM]-(f1:Floor{number:1})
+  return path1,path2

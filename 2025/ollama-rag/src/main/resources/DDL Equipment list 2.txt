@@ -1,0 +1,144 @@
+// Create Locations
+CREATE (b:Building {name: 'TechTower'})
+CREATE (f1:Floor {number: 1})
+CREATE (f2:Floor {number: 2})
+CREATE (r101:Room {name: 'Room 101'})
+CREATE (r102:Room {name: 'Room 102'})
+CREATE (r201:Room {name: 'Room 201'})
+CREATE (r104:Room {name: 'Room 104'})
+
+// Location Hierarchy
+CREATE (b)-[:HAS_FLOOR]->(f1)
+CREATE (b)-[:HAS_FLOOR]->(f2)
+CREATE (f1)-[:HAS_ROOM]->(r101)
+CREATE (f1)-[:HAS_ROOM]->(r102)
+CREATE (f1)-[:HAS_ROOM]->(r104)
+CREATE (f2)-[:HAS_ROOM]->(r201)
+
+// Electrical Equipment
+CREATE (mainPanel:Panel {id: 'P-Main', capacity_kW: 1000})
+CREATE (subPanel1:Panel {id: 'P-1F', capacity_kW: 500})
+CREATE (subPanel2:Panel {id: 'P-2F', capacity_kW: 500})
+CREATE (xfmr:Transformer {id: 'T-01', ratio: '11kV/400V'})
+
+CREATE (cb101:CircuitBreaker {id: 'CB-101', name: 'Circuit  Room 101'})
+CREATE (light101:Light {id: 'L-101', type: 'LED', name: 'light bulb  Room 101'})
+CREATE (outlet101:Outlet {id: 'O-101', name: 'outlet Room 101'})
+CREATE (sensor101:Sensor {id: 'S-Temp-101', type: 'Temperature', name: 'temp sensor room 101'})
+
+CREATE (sensor104:Sensor {id: 'S-Temp-104', type: 'Temperature'})
+CREATE (sensor105:Sensor {id: 'S-Temp-105', type: 'Temperature'})
+CREATE (sensor106:Sensor {id: 'S-Temp-106', type: 'Temperature'})
+CREATE (light104:Light {id: 'L-104', type: 'LED'})
+CREATE (light105:Light {id: 'L-105', type: 'LED'})
+
+// Location Assignment
+CREATE (r101)-[:CONTAINS]->(cb101)
+CREATE (r101)-[:CONTAINS]->(light101)
+CREATE (r101)-[:CONTAINS]->(outlet101)
+CREATE (r101)-[:CONTAINS]->(sensor101)
+CREATE (f1)-[:CONTAINS]->(subPanel1)
+CREATE (f2)-[:CONTAINS]->(subPanel2)
+CREATE (b)-[:CONTAINS]->(mainPanel)
+CREATE (b)-[:CONTAINS]->(xfmr)
+
+
+CREATE (r104)-[:CONTAINS]->(sensor104)
+CREATE (r104)-[:CONTAINS]->(sensor105)
+CREATE (r104)-[:CONTAINS]->(sensor106)
+CREATE (r104)-[:CONTAINS]->(light104)
+CREATE (r104)-[:CONTAINS]->(light105)
+
+// Electrical Connections
+CREATE (xfmr)-[:FEEDS]->(mainPanel)
+CREATE (mainPanel)-[:FEEDS]->(subPanel1)
+CREATE (mainPanel)-[:FEEDS]->(subPanel2)
+CREATE (subPanel1)-[:FEEDS]->(cb101)
+CREATE (cb101)-[:CONTROLS]->(light101)
+CREATE (cb101)-[:CONTROLS]->(outlet101)
+
+// Monitoring
+CREATE (sensor101)-[:MONITORS]->(r101)
+
+
+// more nodes and relations
+// Additional Panels, Circuit Breakers, Lights, Outlets, Sensors
+CREATE (cb102:CircuitBreaker {id: 'CB-102'})
+CREATE (cb104:CircuitBreaker {id: 'CB-104'})
+CREATE (cb201:CircuitBreaker {id: 'CB-201'})
+CREATE (light102:Light {id: 'L-102', type: 'LED'})
+CREATE (outlet102:Outlet {id: 'O-102'})
+CREATE (outlet104:Outlet {id: 'O-104'})
+CREATE (light201:Light {id: 'L-201', type: 'Fluorescent'})
+CREATE (outlet201:Outlet {id: 'O-201'})
+CREATE (sensor201:Sensor {id: 'S-Temp-201', type: 'Temperature'})
+
+// Assign Equipment to Rooms
+CREATE (r102)-[:CONTAINS]->(cb102)
+CREATE (r102)-[:CONTAINS]->(light102)
+CREATE (r102)-[:CONTAINS]->(outlet102)
+CREATE (r104)-[:CONTAINS]->(cb104)
+CREATE (r104)-[:CONTAINS]->(outlet104)
+CREATE (r201)-[:CONTAINS]->(cb201)
+CREATE (r201)-[:CONTAINS]->(light201)
+CREATE (r201)-[:CONTAINS]->(outlet201)
+CREATE (r201)-[:CONTAINS]->(sensor201)
+
+// Feed Relationships
+CREATE (subPanel1)-[:FEEDS]->(cb102)
+CREATE (subPanel1)-[:FEEDS]->(cb104)
+CREATE (subPanel2)-[:FEEDS]->(cb201)
+
+CREATE (cb102)-[:CONTROLS]->(light102)
+CREATE (cb102)-[:CONTROLS]->(outlet102)
+CREATE (cb104)-[:CONTROLS]->(light104)
+CREATE (cb104)-[:CONTROLS]->(light105)
+CREATE (cb104)-[:CONTROLS]->(outlet104)
+CREATE (cb201)-[:CONTROLS]->(light201)
+CREATE (cb201)-[:CONTROLS]->(outlet201)
+
+// Monitoring Relationships
+CREATE (sensor104)-[:MONITORS]->(r104)
+CREATE (sensor105)-[:MONITORS]->(r104)
+CREATE (sensor106)-[:MONITORS]->(r104)
+CREATE (sensor201)-[:MONITORS]->(r201)
+
+===================Electrical building
+
+// Create buildings
+CREATE (building1:Building {name: "Main Building", address: "123 Main St"})
+CREATE (building2:Building {name: "Laboratory", address: "456 Lab St"})
+CREATE (building3:Building {name: "Second Building", address: "123 Second St"})
+
+// Create electrical equipment
+CREATE (light1:ElectricalEquipment {type: "Lighting System", model: "LED", wattage: 100})
+CREATE (generator1:ElectricalEquipment {type: "Generator", model: "Diesel", wattage: 5000})
+CREATE (solarPanel1:ElectricalEquipment {type: "Solar Panel", model: "Monocrystalline", wattage: 2000})
+
+// Create power sources
+CREATE (powerSource1:PowerSource {name: "Generator Power Source"})
+CREATE (powerSource2:PowerSource {name: "Solar Panel Power Source"})
+
+// Add relationships between buildings and electrical equipment
+CREATE (building1)-[:HAS_ELECTRICAL_EQUIPMENT]->(light1)
+CREATE (building1)-[:HAS_ELECTRICAL_EQUIPMENT]->(generator1)
+
+CREATE (building2)-[:HAS_ELECTRICAL_EQUIPMENT]->(solarPanel1)
+
+// Add relationships between electrical equipment and power sources
+CREATE (light1)-[:USES_POWER_SOURCE]->(powerSource1)
+CREATE (generator1)-[:USES_POWER_SOURCE]->(powerSource1)
+CREATE (generator1)-[:USES_POWER_SOURCE]->(powerSource2)
+CREATE (solarPanel1)-[:USES_POWER_SOURCE]->(powerSource2)
+
+
+==================
+MATCH (n) DETACH DELETE n
+=================
+
+===========================
+wait for a command
+
+what equipments does room 104 have? respond in cypher
+
+==============
